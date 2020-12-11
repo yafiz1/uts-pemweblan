@@ -37,7 +37,7 @@
 			];
 
 		?>
-		<div class="card text-center shadow bg-warning text-white w-25 align-self-start">
+		<div class="card text-center shadow bg-dark text-white w-25 align-self-start">
 			<div class="card-header">
 				<b><h4>Login</h4></b>
 			</div>
@@ -51,7 +51,7 @@
 						<?= form_label('Password', 'login-password'); ?>
 		   				<?= form_input($login_password); ?>
 					</div>
-					<button type="submit" id="login" class="btn btn-dark w-100">Login</button>
+					<button type="submit" id="login" class="btn btn-secondary w-100">Login</button>
 				<?= form_close(); ?>
 				<!-- </form> -->
 			</div>
@@ -95,7 +95,7 @@
 		?>
 
 		<div class="card text-center shadow bg-dark text-white ml-5 align-self-center" style="padding: 10px;">OR</div>
-		<div class="card text-center shadow bg-warning text-white w-25 ml-5">
+		<div class="card text-center shadow bg-dark text-white w-25 ml-5">
 			<div class="card-header">
 				<b><h4>Register</h4></b>
 			</div>
@@ -117,7 +117,7 @@
 						<?= form_label('Konfirmasi Password', 'confirm-register-password'); ?>
 		   				<?= form_input($confirm_register_password); ?>
 					</div>
-					<button type="submit" id="register" class="btn btn-dark w-100">Register</button>
+					<button type="submit" id="register" class="btn btn-secondary w-100">Register</button>
 				<?= form_close(); ?>
 			</div>
 		</div>	

@@ -64,47 +64,53 @@
 
 	<div class="card text-center mt-2">
 		<div id="card-header" class="card-header bg-dark">
-			<ul class="nav nav-tabs card-header-tabs"> <!-- parent -->
-				<li class="nav-item"> <!-- parent -->
-					<div class="nav-link text-dark active">All Note</div> <!-- child -->
+			<ul class="nav nav-tabs card-header-tabs">
+				<li class="nav-item">
+					<div class="nav-link text-dark active" id-jenis='All'>All Note</div>
 				</li>
-				<?php $jenisArr = []; ?>
+				<?php $namaJenis = []; ?>
 				<?php foreach ($jenis as $j): ?>
 					<li class="nav-item" style="/* border-color: red!important; */">
-						<div class="nav-link text-white"><?= $j->jenis; ?></div>
+						<div class="nav-link text-white" id-jenis='<?= $j->id; ?>'><?= $j->jenis; ?></div>
 					</li>
-					<?php $jenisArr[] = [$j->id => $j->jenis]; ?>
+					<?php $namaJenis[] = [$j->id => $j->jenis]; ?>
 				<?php endforeach; ?>
-				<?php foreach ($jenisArr as $jA): ?>
+				<?php foreach ($namaJenis as $nama): ?>
 					<?php 
-						if ($jA[key($jA)] == 'Work') {
-							$jenisArr[key($jA)] = "bg-danger";
-						} else if ($jA[key($jA)] == 'Life') {
-							$jenisArr[key($jA)] = "bg-success";
-						} else if ($jA[key($jA)] == 'Personal') {
-							$jenisArr[key($jA)] = "bg-info";
-						} else if ($jA[key($jA)] == 'Travel') {
-							$jenisArr[key($jA)] = "bg-warning";
-						}
-					 ?>
+						if ($nama[key($nama)] == 'Work') $namaJenis[key($nama)] = "bg-danger";
+						else if ($nama[key($nama)] == 'Life') $namaJenis[key($nama)] = "bg-success";
+						else if ($nama[key($nama)] == 'Personal') $namaJenis[key($nama)] = "bg-info";
+						else if ($nama[key($nama)] == 'Travel') $namaJenis[key($nama)] = "bg-warning";				 
+					?>
 				<?php endforeach; ?>
-				
-				
-<!-- 				<li class="nav-item">
-					<div class="nav-link disabled" data-type="#" tabindex="-1" aria-disabled="true">Life</div>
-				</li> -->
 			</ul>
 		</div>
-		<div id="isinya" class="card-body d-flex flex-wrap">
+		<div id="container" class="card-body d-flex flex-wrap">
+			<style>
+				.note .card,
+				.note .edit {
+					width: 18rem;
+					height: 18rem;
+				}
+
+				.edit {
+					background-color: rgba(0,0,0,.5);
+				}
+
+			</style>
 			<?php foreach ($data as $datum):?>
-				<div class="p-1 theParent" style="position: relative;">
-					<div class="card text-white <?= $jenisArr[$datum->id_jenis] ?> note" style="width: 18rem; height: 18rem;">
+				<div class="p-1 note" style="position: relative;">
+					<div class="card text-white <?= $namaJenis[$datum->id_jenis];?>">
 						<div class="card-header text-center"><?= $datum->title; ?></div>
 						<div class="card-body">
-					    	<p class="card-text"><?= $datum->isi; ?></p>
+					    	<p class="card-text">
+					    		<?= substr($datum->isi,0,265); ?>
+					    		<?= strlen($datum->isi) > 265 ? '...' : '' ?>
+					    		<span hidden=""><?= $datum->isi; ?></span>
+					    	</p>
 						</div>
 					</div>
-					<div class="card edit" style="position: absolute; z-index: 0; top: .25rem; width: 18rem; height: 18rem; background-color: rgba(0,0,0,.5); display: none;">
+					<div class="card edit" style="position: absolute; top: .25rem; display: none;">
 						<div class="card-body d-flex justify-content-around align-items-center">
 							<a href="" class="text-primary"><i class="far fa-edit fa-3x"></i></a>
 							<a href="" class="text-danger"><i class="fas fa-trash fa-3x"></i></a>
@@ -112,122 +118,122 @@
 					</div>
 				</div>
 			<?php endforeach; ?>
+				<div class="p-1 note" style="position: relative;">
+					<div class="card text-white bg-dark">
+						<!-- <div class="card-header text-center">Tambah Data</div> -->
+						<style>
+							.fa-plus:hover {
+								opacity: .5;
+							}
+						</style>
+						<div class="card-body d-flex justify-content-around align-items-center">
+					    	<a href="" class="text-white"><i class="fas fa-plus fa-5x"></i></a>
+						</div>
+					</div>
+				</div>
 		</div>
 	</div>
 </div>
 
 <!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header bg-warning">
-				<h5 class="modal-title" id="exampleModalLabel">Edit Note</h5>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-				<span aria-hidden="true">&times;</span>
-				</button>
-			</div>
-			<div class="modal-body">
-				<form action="" method="POST">
-					<input type="hidden" class="form-control" name="id" id="edit-id" aria-describedby="id">
-				<div class="form-group">
-				<label for="edit-title">Title</label>
-				<input type="text" class="form-control" name="edit-title" id="edit-title" aria-describedby="title">
-				</div>
-				<div class="form-group">
-				<label for="edit-isi">Isi</label>
-				<textarea class="form-control" name="edit-isi" id="edit-isi" rows="3"></textarea>
-				</div>
-				
-			</div>
-			<div class="modal-footer">
-				<button type="submit" class="btn btn-primary">Save changes</button>
-			</div>
-			</form>
-		</div>
-	</div>
+<div class="modal fade" id="detailNoteModal" tabindex="-1" role="dialog" aria-labelledby="detailNoteModalTitle" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-white">
+        <h5 class="modal-title" id="detailNoteModalTitle">Modal title</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        ...
+      </div>
+    </div>
+  </div>
 </div>
 <script>
 
-	// $(document).on("mousemove", document, function() {
-	// $(document).on("mousemove", function() {
-		$(".nav-link").each(function() {
-			// if (!$(this).hasClass("active")) {
-				$(this).hover(
-					function() {
-						if ($(this).text() == "Work")  $(this).parent("li").addClass("bg-danger")
-						else if ($(this).text() == "Life")  $(this).parent("li").addClass("bg-success")
-						else if ($(this).text() == "Personal")  $(this).parent("li").addClass("bg-info")
-						else if ($(this).text() == "Travel")  $(this).parent("li").addClass("bg-warning")
-						else $(this).parent("li").addClass("bg-dark")
 
-						$(this).css("border","1px solid transparent");
-						$(this).parent("li").css("border-top-left-radius",".25rem");
-						$(this).parent("li").css("border-top-right-radius",".25rem");
-						
-					}, function() {
-						$(this).parent("li").removeClass("bg-danger")
-						$(this).parent("li").removeClass("bg-success")
-						$(this).parent("li").removeClass("bg-info")
-						$(this).parent("li").removeClass("bg-warning")
-						$(this).parent("li").removeClass("bg-dark")
-					}
-				);
+	$(".nav-link").each(function() {
+		$(this).hover(
+			function() {
+				if ($(this).text() == "Work")  $(this).parent("li").addClass("bg-danger")
+				else if ($(this).text() == "Life")  $(this).parent("li").addClass("bg-success")
+				else if ($(this).text() == "Personal")  $(this).parent("li").addClass("bg-info")
+				else if ($(this).text() == "Travel")  $(this).parent("li").addClass("bg-warning")
+				else $(this).parent("li").addClass("bg-dark")
 
-				$(this).click(function() {
-					$("#card-header").removeClass("bg-dark");
-					$("#card-header").removeClass("bg-danger");
-					$("#card-header").removeClass("bg-success");
-					$("#card-header").removeClass("bg-info");
-					$("#card-header").removeClass("bg-warning");
-					$("#card-header").removeClass("bg-dark");
-					if ($(this).text() == "Work") $("#card-header").addClass("bg-danger");
-					else if ($(this).text() == "Life") $("#card-header").addClass("bg-success");
-					else if ($(this).text() == "Personal") $("#card-header").addClass("bg-info");
-					else if ($(this).text() == "Travel") $("#card-header").addClass("bg-warning");
-					else $("#card-header").addClass("bg-dark");
+				$(this).css("border","1px solid transparent");
+				$(this).parent("li").css("border-top-left-radius",".25rem");
+				$(this).parent("li").css("border-top-right-radius",".25rem");
+				
+			}, function() {$(this).parent("li").removeClass(["bg-danger","bg-success","bg-info","bg-warning","bg-dark"])}
+		);
 
-					$(".nav-link").removeClass("active");
-					$(".nav-link").removeClass("text-dark");
-					$(".nav-link").addClass("text-white");
+		$(this).click(function() {
+			let method = "";
+			if ($(this).attr('id-jenis') == 'All') {
+				method = 'selectData';
+			}else{
+				method = 'selectDataWhere';
+			}
+			$.ajax({
+				method: "POST",
+				url: "<?= base_url()?>/Home/"+method+"/"+$(this).attr('id-jenis'),
+				data: { jenis: $(this).text()},
+				dataType: 'json',
+				success: function(result) {
+					console.log(result);
+					$.ajax({
+						method: "POST",
+						url: "ajax.php",
+						data: { 
+							data: result,
+							namaJenis: <?= json_encode($namaJenis); ?>
+						},
+						// dataType: 'json',
+						success: function(data) {
+							// console.log(data);
+							
+							$("#container").html(data);
+						}
+					})
+				}
+			})
 
-					$(this).addClass("active");
-					$(this).addClass("text-dark");
+			$("#card-header").removeClass(["bg-danger","bg-success","bg-info","bg-warning","bg-dark"]);
+			if ($(this).text() == "Work") $("#card-header").addClass("bg-danger");
+			else if ($(this).text() == "Life") $("#card-header").addClass("bg-success");
+			else if ($(this).text() == "Personal") $("#card-header").addClass("bg-info");
+			else if ($(this).text() == "Travel") $("#card-header").addClass("bg-warning");
+			else $("#card-header").addClass("bg-dark");
 
-					// $("#isinya").css("visibility","visible");
-				});
-			// }
+			$(".nav-link").removeClass(["active","text-dark"]);
+			$(".nav-link").addClass("text-white");
+			$(this).addClass(["active","text-dark"]);
 
-		})
-		
-	// });
+		});
+	})
 
 	$(".note").each(function() {
-		$(this).parent().hover(
-			function() {
-				$(this).children('.edit').fadeIn()
-				// $(this).children('.edit').css("z-index",0)
-				// $(this).children('.edit').animate({
-				// 	opacity: .5
-				// });
-			},
-			function() {
-				$(this).children('.edit').fadeOut()
-				// $(this).children('.edit').animate({
-				// 	opacity: 0
-				// }, function() {
-				// 	$(this).children('.edit').css("z-index",-1)
-				// });
-				
-			}
+		$(this).hover(
+			function() {$(this).children('.edit').fadeIn()},
+			function() {$(this).children('.edit').fadeOut()}
 		)
-	})
-	// $("a[href='#']").click(function() {
-	// 	let id = $(this).attr("data-id");
-	// 	console.log(id)
-	// 	$("#edit-id").val(id);
-	// 	$(".modal-body form").attr("action","<?= base_url().'/public/Home/updateNote' ?>")
-	// 	$(".modal-body input#edit-title").val($(this).parent().prev().text());
-	// 	$(".modal-body textarea").val($(this).parent().parent().next().children().text());
-	// });
+
+		if ($(this).children().first().children('.card-body').children().children().text().length > 265) {
+			$(this).css('cursor','pointer');
+			$(this).click(function() {
+				$(".modal-header").removeClass(['bg-danger','bg-info','bg-success','bg-warning']);
+
+				$(".modal-title").text($(this).children().children('.card-header').text());
+				$(".modal-body").text($(this).children().children('.card-body').children().children().text());
+
+				let jenis = $(this).children().attr('class').split(' ');
+				$(".modal-header").addClass(jenis[jenis.length-1]);
+				$("#detailNoteModal").modal('show');
+			});
+		}
+	});
 	
 </script>

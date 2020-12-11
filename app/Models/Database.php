@@ -29,6 +29,13 @@ class Database extends Model {
 		return $builder->get()->getResult();
 	}
 
+	public function selectDataWhere($where)
+	{
+		$db = \Config\Database::connect();
+		$builder = $db->table('tb_catatan');
+		return $builder->getWhere(['id_jenis' => $where])->getResult();
+	}
+
 	public function updateData($data)
 	{
 		$db = \Config\Database::connect();

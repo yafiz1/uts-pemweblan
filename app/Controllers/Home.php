@@ -19,6 +19,16 @@ class Home extends BaseController
 		
 	}
 
+	public function selectData($where)
+	{
+		return json_encode(model('Database')->selectData("tb_catatan"));
+	}
+
+	public function selectDataWhere($where)
+	{
+		return json_encode(model('Database')->selectDataWhere($where));
+	}
+
 	public function addNote()
 	{
 		$session = \Config\Services::session();

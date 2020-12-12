@@ -7,63 +7,57 @@ class Home extends BaseController
 		$session = \Config\Services::session();
 		// https://codeigniter.com/user_guide/libraries/sessions.html?highlight=session#adding-session-data
 		if ($session->has('username')) {
-			$data['data'] = model('Database')->selectData("tb_catatan");
-			$data['jenis'] = model('Database')->selectData("tb_jenis");
-			helper('form');
-			echo view('templates/header');
-			echo view('home/index', $data);
-			echo view('templates/footer');
+			$this->home();
 		}else{
 			return redirect()->to(base_url().'/Login');
 		}
 		
 	}
 
-	public function selectData($where)
+	public function home()
 	{
-		return json_encode(model('Database')->selectData("tb_catatan"));
+		$data['data'] = model('Database')->selectDataPerUser("view_catatan", session()->get('id_user'));
+		$data['categories'] = model('Database')->selectData("tb_jenis");
+		helper('form');
+		echo view('templates/header');
+		echo view('home/index', $data);
+		echo view('templates/footer');
+	}
+
+	public function selectData()
+	{
+		return json_encode(model('Database')->selectDataPerUser("view_catatan",session()->get('id_user')));
 	}
 
 	public function selectDataWhere($where)
 	{
-		return json_encode(model('Database')->selectDataWhere($where));
+		return json_encode(model('Database')->selectDataWhere($where, session()->get('id_user')));
 	}
 
 	public function addNote()
 	{
-		$session = \Config\Services::session();
+		
 		$data = [
-			'title' => $this->request->getPost('title'),
+			'title' => $this->request->getPost('judul'),
 			'isi' => $this->request->getPost('isi'),
-			'id_user' => $session->get('id_user'),
-			'id_jenis' => '1'
+			'id_user' => session()->get('id_user'),
+			'id_jenis' => $this->request->getPost('jenis')
 	    ];
 	    $result = model('Database')->insertData($data);
-	    if ($result) {
-   			$session->setFlashdata('insertData', 'success');
-	    }else{
-	    	$session->setFlashdata('insertData', 'failed');
-	    }
 	    return redirect()->to(base_url().'/Home');
 	}
 
 	public function updateNote()
 	{
-		$session = \Config\Services::session();
 		$data = [
 			'id' => $this->request->getPost('id'),
-			'title' => $this->request->getPost('edit-title'),
-			'isi' => $this->request->getPost('edit-isi'),
-			'id_user' => $session->get('id_user'),
-			'id_jenis' => '1'
+			'title' => $this->request->getPost('judul'),
+			'isi' => $this->request->getPost('isi'),
+			'id_user' => session()->get('id_user'),
+			'id_jenis' => $this->request->getPost('jenis')
 
 	    ];
 		$result = model('Database')->updateData($data);
-		if ($result) {
-			$session->setFlashdata('updateData', 'success');
-		}else{
-			$session->setFlashdata('updateData', 'failed');
-		}
 		return redirect()->to(base_url().'/Home');
 	}
 

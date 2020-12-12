@@ -29,11 +29,18 @@ class Database extends Model {
 		return $builder->get()->getResult();
 	}
 
-	public function selectDataWhere($where)
+	public function selectDataPerUser($table, $id_user)
 	{
 		$db = \Config\Database::connect();
-		$builder = $db->table('tb_catatan');
-		return $builder->getWhere(['id_jenis' => $where])->getResult();
+		$builder = $db->table($table);
+		return $builder->getWhere(['id_user' => $id_user])->getResult();
+	}
+
+	public function selectDataWhere($where, $id_user)
+	{
+		$db = \Config\Database::connect();
+		$builder = $db->table('view_catatan');
+		return $builder->getWhere(['id_jenis' => $where, 'id_user' => $id_user])->getResult();
 	}
 
 	public function updateData($data)

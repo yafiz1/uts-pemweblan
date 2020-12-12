@@ -1,106 +1,30 @@
-<?php 
-	$session = \Config\Services::session();
-	if ($session->has("insertData")) {
-		if ($session->get("insertData") == "success") {
-			echo "<script>alert('Tambah Catatan Berhasil');</script>";
-		}else{
-			echo "<script>alert('Tambah Catatan Gagal');</script>";
-		}
-	}else if ($session->has("deleteData")) {
-		if ($session->get("deleteData") == "success") {
-			echo "<script>alert('Hapus Catatan Berhasil');</script>";
-		}else{
-			echo "<script>alert('Hapus Catatan Gagal');</script>";
-		}
-	}
-
- ?>
-<style>
-	div.nav-link {
-		cursor: pointer;
-	}
-</style>
 <div class="container-fluid mt-5 text-center d-flex flex-column">
-	<!-- <div class="w-50 align-self-center">
-		<?php 
-
-			$title =  [
-			       'name' => 'title',
-			       'id'   => 'title',
-			       'placeholder' => 'Title',
-			       'class' => 'form-control',
-			       'autocomplete' => 'off',
-			       'required' => ''
-			];
-
-			$isi =  [
-			       'name' => 'isi',
-			       'id'   => 'isi',
-			       'type' => 'password',
-			       'class' => 'form-control',
-			       'required' => '',
-			       'autocomplete' => 'off'
-			];
-
-			$button = [
-				   'name' => 'tambah',
-			       'id'   => 'tambah',
-			       'type' => 'submit',
-			       'class' => 'btn btn-primary',
-			       'content' => 'TAMBAH'
-			]
-
-		?>
-		<?= form_open(base_url().'/public/Home/addNote') ?>
-			<div class="form-group">
-			   	<?= form_input($title); ?>
-			</div>
-			<div class="form-group">
-				<?= form_textarea($isi); ?>
-			</div>
-			<?= form_button($button); ?>
-		<?= form_close(); ?>
-	</div> -->
-
 	<div class="card text-center mt-2">
 		<div id="card-header" class="card-header bg-dark">
 			<ul class="nav nav-tabs card-header-tabs">
 				<li class="nav-item">
 					<div class="nav-link text-dark active" id-jenis='All'>All Note</div>
 				</li>
-				<?php $namaJenis = []; ?>
-				<?php foreach ($jenis as $j): ?>
-					<li class="nav-item" style="/* border-color: red!important; */">
-						<div class="nav-link text-white" id-jenis='<?= $j->id; ?>'><?= $j->jenis; ?></div>
+				<?php foreach ($categories as $category): ?>
+					<li class="nav-item">
+						<div class="nav-link text-white" id-jenis='<?= $category->id; ?>'><?= $category->jenis; ?></div>
 					</li>
-					<?php $namaJenis[] = [$j->id => $j->jenis]; ?>
-				<?php endforeach; ?>
-				<?php foreach ($namaJenis as $nama): ?>
-					<?php 
-						if ($nama[key($nama)] == 'Work') $namaJenis[key($nama)] = "bg-danger";
-						else if ($nama[key($nama)] == 'Life') $namaJenis[key($nama)] = "bg-success";
-						else if ($nama[key($nama)] == 'Personal') $namaJenis[key($nama)] = "bg-info";
-						else if ($nama[key($nama)] == 'Travel') $namaJenis[key($nama)] = "bg-warning";				 
-					?>
 				<?php endforeach; ?>
 			</ul>
 		</div>
 		<div id="container" class="card-body d-flex flex-wrap">
-			<style>
-				.note .card,
-				.note .edit {
-					width: 18rem;
-					height: 18rem;
+			<?php 
+				foreach ($data as $datum) {
+					if ($datum->warna == 'Red') $datum->warna = 'bg-danger';
+					else if ($datum->warna == 'Green') $datum->warna = 'bg-success';
+					else if ($datum->warna == 'light-blue') $datum->warna = 'bg-info';
+					else if ($datum->warna == 'yellow') $datum->warna = 'bg-warning';
 				}
-
-				.edit {
-					background-color: rgba(0,0,0,.5);
-				}
-
-			</style>
+			?>
 			<?php foreach ($data as $datum):?>
+
 				<div class="p-1 note" style="position: relative;">
-					<div class="card text-white <?= $namaJenis[$datum->id_jenis];?>">
+					<div class="card text-white <?= $datum->warna ?>">
 						<div class="card-header text-center"><?= $datum->title; ?></div>
 						<div class="card-body">
 					    	<p class="card-text">
@@ -112,22 +36,16 @@
 					</div>
 					<div class="card edit" style="position: absolute; top: .25rem; display: none;">
 						<div class="card-body d-flex justify-content-around align-items-center">
-							<a href="" class="text-primary"><i class="far fa-edit fa-3x"></i></a>
-							<a href="" class="text-danger"><i class="fas fa-trash fa-3x"></i></a>
+							<a href="#" data-id="<?= $datum->id ?>" class="text-primary edit-btn"><i class="far fa-edit fa-3x"></i></a>
+							<a href="<?= base_url()."/Home/deleteNote/".$datum->id ?>" class="text-danger"><i class="fas fa-trash fa-3x"></i></a>
 						</div>
 					</div>
 				</div>
 			<?php endforeach; ?>
-				<div class="p-1 note" style="position: relative;">
+				<div class="p-1 add">
 					<div class="card text-white bg-dark">
-						<!-- <div class="card-header text-center">Tambah Data</div> -->
-						<style>
-							.fa-plus:hover {
-								opacity: .5;
-							}
-						</style>
 						<div class="card-body d-flex justify-content-around align-items-center">
-					    	<a href="" class="text-white"><i class="fas fa-plus fa-5x"></i></a>
+					    	<a href="#" class="text-white"><i class="fas fa-plus fa-5x"></i></a>
 						</div>
 					</div>
 				</div>
@@ -151,7 +69,140 @@
     </div>
   </div>
 </div>
+
+<!-- Add Modal -->
+<div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-dark text-white">
+        <h5 class="modal-title" id="addModalLabel">Modal title</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <?= form_open(base_url()."/Home/addNote") ?>
+      <div class="modal-body ">
+		
+			<div class="form-group">
+				<label for="judul">Judul</label>
+				<input type="text" class="form-control" id="judul" name="judul">
+			</div>
+			<div class="form-group">
+			    <label for="isi">Catatan</label>
+			    <textarea class="form-control" id="isi" rows="3" name="isi"></textarea>
+			 </div>
+			 <div class="form-group">
+			    <label for="isi">Kategori</label>
+			    <div class="btn-group btn-group-toggle d-flex" data-toggle="buttons" style="width: 100%;">
+				  <label class="btn btn-danger">
+				    <input type="radio" name="jenis" id="option1" autocomplete="off" value="1"> Work
+				  </label>
+				  <label class="btn btn-success">
+				    <input type="radio" name="jenis" id="option2" autocomplete="off" value="2"> Life
+				  </label>
+				  <label class="btn btn-info">
+				    <input type="radio" name="jenis" id="option3" autocomplete="off" value="3"> Personal
+				  </label>
+				  <label class="btn btn-warning">
+				    <input type="radio" name="jenis" id="option3" autocomplete="off" value="4"> Travel
+				  </label>
+				</div>
+			 </div>
+			 
+		
+      </div>
+      <div class="modal-footer ">
+        <button type="submit" class="btn btn-dark w-100">Tambah</button>
+        
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Modal -->
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-dark text-white">
+        <h5 class="modal-title" id="editModalLabel">Modal title</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <?= form_open(base_url()."/Home/updateNote") ?>
+      <div class="modal-body ">
+			<input type="number" hidden="" class="form-control" id="id" name="id">
+			<div class="form-group">
+				<label for="judul">Judul</label>
+				<input type="text" class="form-control" id="judul" name="judul">
+			</div>
+			<div class="form-group">
+			    <label for="isi">Catatan</label>
+			    <textarea class="form-control" id="isi" rows="3" name="isi"></textarea>
+			 </div>
+			 <div class="form-group">
+			    <label for="isi">Kategori</label>
+			    <div class="btn-group btn-group-toggle" data-toggle="buttons" style="width: 100%;">
+				  <label class="btn btn-danger" style="width: 25%;">
+				    <input type="radio" name="jenis" id="option1" autocomplete="off" value="1"> Work
+				  </label>
+				  <label class="btn btn-success" style="width: 25%;">
+				    <input type="radio" name="jenis" id="option2" autocomplete="off" value="2"> Life
+				  </label>
+				  <label class="btn btn-info" style="width: 25%;">
+				    <input type="radio" name="jenis" id="option3" autocomplete="off" value="3"> Personal
+				  </label>
+				  <label class="btn btn-warning" style="width: 25%;">
+				    <input type="radio" name="jenis" id="option4" autocomplete="off" value="4"> Travel
+				  </label>
+				</div>
+			 </div>
+			 
+		
+      </div>
+      <div class="modal-footer ">
+        <button type="submit" class="btn btn-dark w-100">Edit</button>
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
 <script>
+
+	$(".add a").click(function() {
+		$("#addModalLabel").text("Note Baru");
+
+		$("#addModal").modal();
+	})
+
+	$(".edit-btn").click(function() {
+		$("#editModalLabel").text("Edit Note");
+		$("#editModal #id").val($(this).attr("data-id"));
+		$("#editModal #judul").val($(this).parent().parent().parent().children().first().children('.card-header').text())
+		$("#editModal #isi").val($(this).parent().parent().parent().children().first().children('.card-body').children().children("span").text())
+		let jenis = $(this).parent().parent().parent().children().first().attr("class").split(' ');
+		jenis = jenis[jenis.length-1];
+		if (jenis == 'bg-danger') {
+			$("#editModal #option1").attr("checked","");
+			$("#editModal #option1").parent().addClass("active");
+		}else if (jenis == 'bg-success') {
+			$("#editModal #option2").attr("checked","");
+			$("#editModal #option2").parent().addClass("active");
+		}else if (jenis == 'bg-info') {
+			$("#editModal #option3").attr("checked","");
+			$("#editModal #option3").parent().addClass("active");
+		}else if (jenis == 'bg-warning') {
+			$("#editModal #option4").attr("checked","");
+			$("#editModal #option4").parent().addClass("active");
+		}
+		$("#editModal").modal();
+		$("#editModal").addClass("active");
+	})
+
+	$("#editModal").on("hide.bs.modal", function() {
+		$("#editModal").removeClass("active");
+	})
 
 
 	$(".nav-link").each(function() {
@@ -172,11 +223,8 @@
 
 		$(this).click(function() {
 			let method = "";
-			if ($(this).attr('id-jenis') == 'All') {
-				method = 'selectData';
-			}else{
-				method = 'selectDataWhere';
-			}
+			if ($(this).attr('id-jenis') == 'All') method = 'selectData';
+			else method = 'selectDataWhere';
 			$.ajax({
 				method: "POST",
 				url: "<?= base_url()?>/Home/"+method+"/"+$(this).attr('id-jenis'),
@@ -189,12 +237,10 @@
 						url: "ajax.php",
 						data: { 
 							data: result,
-							namaJenis: <?= json_encode($namaJenis); ?>
+							base_url : '<?= base_url(); ?>'
 						},
-						// dataType: 'json',
 						success: function(data) {
 							// console.log(data);
-							
 							$("#container").html(data);
 						}
 					})
@@ -224,14 +270,17 @@
 		if ($(this).children().first().children('.card-body').children().children().text().length > 265) {
 			$(this).css('cursor','pointer');
 			$(this).click(function() {
-				$(".modal-header").removeClass(['bg-danger','bg-info','bg-success','bg-warning']);
+				if ((!$("#editModal").hasClass('active'))) {
+					$("#detailNoteModal .modal-header").removeClass(['bg-danger','bg-info','bg-success','bg-warning']);
 
-				$(".modal-title").text($(this).children().children('.card-header').text());
-				$(".modal-body").text($(this).children().children('.card-body').children().children().text());
+					$("#detailNoteModal .modal-title").text($(this).children().children('.card-header').text());
+					$("#detailNoteModal .modal-body").text($(this).children().children('.card-body').children().children().text());
 
-				let jenis = $(this).children().attr('class').split(' ');
-				$(".modal-header").addClass(jenis[jenis.length-1]);
-				$("#detailNoteModal").modal('show');
+					let jenis = $(this).children().attr('class').split(' ');
+					$("#detailNoteModal .modal-header").addClass(jenis[jenis.length-1]);
+					$("#detailNoteModal").modal('show');	
+				}
+				
 			});
 		}
 	});

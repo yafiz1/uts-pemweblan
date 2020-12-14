@@ -4,9 +4,7 @@ use CodeIgniter\Model;
 
 class Login extends Model {
 
-	protected $table = 'tb_users';
-	protected $primaryKey = 'id';
-	protected $allowedFields = ['nama', 'username', 'password'];
+	protected $table = 'users_tb';
 
 	public function login($username, $password)
 	{
@@ -18,13 +16,8 @@ class Login extends Model {
 	public function register($data)
 	{
 		$db = \Config\Database::connect();
-		$data = [
-		        'nama' => $data['name'],
-		        'username'  => $data['username'],
-		        'password'  => $data['password']
-		];
-		$builder = $db->table($this->table);
-		return $builder->insert($data);
+		$db->table($this->table)->insert($data);
+		return $db->affectedRows();
 	}
 
 	

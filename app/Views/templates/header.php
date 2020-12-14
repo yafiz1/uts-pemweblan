@@ -25,13 +25,13 @@
 			}
 
 			.note .card,
-			.note .edit,
+			.note .overplay,
 			.add .card{
-				width: 18rem;
-				height: 18rem;
+				width: 20rem;
+				height: 20rem;
 			}
 
-			.edit {
+			.overplay {
 				background-color: rgba(0,0,0,.5);
 			}
 
@@ -52,7 +52,7 @@
 				<div class="form-inline my-2 my-lg-0 text-white">Selamat datang, 
 					<div class="dropdown show">
 						<div class="dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="cursor: pointer;">
-							<?= session()->nama; ?> <span class="sr-only">Toggle Dropdown</span>
+							<?= session()->name; ?> <span class="sr-only">Toggle Dropdown</span>
 						</div>
 
 						<div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink">

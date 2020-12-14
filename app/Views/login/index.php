@@ -125,41 +125,31 @@
 
 <script>
 	$("input#login-username").keyup(function() {
-		if ($(this).val() != "") {
-			$(this).addClass("is-valid");
-		}else{
-			$(this).removeClass("is-valid");
-		}
+		if ($(this).val() != "") $(this).addClass("is-valid");
+		else $(this).removeClass("is-valid");
 	});
+
 	$("input#login-password").keyup(function() {
-		if ($(this).val() != "") {
-			$(this).addClass("is-valid");
-		}else{
-			$(this).removeClass("is-valid");
-		}
+		if ($(this).val() != "") $(this).addClass("is-valid");
+		else $(this).removeClass("is-valid");
 	});
 
 	$("input#register-name").keyup(function() {
-		if ($(this).val() != "") {
-			$(this).addClass("is-valid");
-		}else{
-			$(this).removeClass("is-valid");
-		}
+		if ($(this).val() != "") $(this).addClass("is-valid");
+		else $(this).removeClass("is-valid");
+		
 	});
+
 	$("input#register-username").keyup(function() {
-		if ($(this).val() != "") {
-			$(this).addClass("is-valid");
-		}else{
-			$(this).removeClass("is-valid");
-		}
+		if ($(this).val() != "") $(this).addClass("is-valid");
+		else $(this).removeClass("is-valid");
 	});
+	
 	$("input#register-password").keyup(function() {
-		if ($(this).val() != "") {
-			$(this).addClass("is-valid");
-		}else{
-			$(this).removeClass("is-valid");
-		}
+		if ($(this).val() != "") $(this).addClass("is-valid");
+		else $(this).removeClass("is-valid");
 	});
+
 	$("input#confirm-register-password").keyup(function() {
 		if ($(this).val() == $("#register-password").val()) {
 			$(this).removeClass("is-invalid");
